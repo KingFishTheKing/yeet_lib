@@ -6,7 +6,7 @@ __*The lord Yeethed and the Lord Yoinked away*__
 Abstraction messaging layer, using custom event triggers in a (mostly) Pub/Sub pattern to make 121 or 12M communications easier  
 Uses the build in event and messaging queu to transport events over to elements.
 
-###What is it and what does it do
+### What is it and what does it do
 An abstraction layer which takes away the burden of tracking where bindings are and reflecting state to other components. It creates an easy way for elements or the environment to communicate and react to eachother by providing an interface to bind actions to rather than the elements itself, thus decoupling sender/receiver
 
 __Why not observables or promises?__
@@ -38,7 +38,7 @@ __Beware__
 - Relies on prototype extending of Element prototype, if you're not into that (like a lot of people are) I'm sorry
 - Exposes the interface on the window, so it is globally avaible 
 
-###What's to come  
+### What's to come  
 - Fully functional and tested 'library'
 - Support for observables to throw yoinks
 - Build in donut pause
