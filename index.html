@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="yeet_lib.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            function n(e){
+                console.log('ok');
+                this.innerText = 'yay';
+            }
+            let div = document.querySelector('div');
+            div.yoink('ok', n);
+
+            div.onWhisper = function(e){
+                console.log(e);
+            }
+
+            let button = document.querySelector('#clicker');
+            button.addEventListener('click', function(e){
+                div.sendWhisper = Array(8).fill('r');
+            });
+            
+            let button2 = document.querySelector('#clicker2');
+            button2.addEventListener('click', function(e){
+                this.yeet('notok', 'test')
+            });
+            let button3 = document.querySelector('#clicker3');
+            button3.addEventListener('click', function(e){
+                this.yeet('ok', 'test')
+            });
+        })
+    </script>
+</head>
+<body>
+    <div>No notification</div>
+    <div id="clicker" style="height:50px; width:50px; color:white; background-color:black; cursor:pointer">
+        Send ok
+    </div>
+
+    <div id="clicker2" style="height:50px; width:50px; color:white; background-color:black; cursor:pointer">
+        Send notok
+    </div>
+
+    <div id="clicker3" style="height:50px; width:50px; color:white; background-color:black; cursor:pointer">
+        Send ok
+    </div>
+</body>
+</html>
