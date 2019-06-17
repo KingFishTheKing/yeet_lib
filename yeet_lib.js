@@ -138,19 +138,11 @@ window.Yeet = (function(){
             throw new TypeError(`yeet identifier should be either a string representing it's name or the index number from the Activeyeetsarray`);
         } 
         let objNotif = {name:n,callback:c}
-        if (a.yeets.find((e) => {
-                return (e.name === n && e.callback === c)
-            }) === undefined)
+        if (a.yoinks.find((e) => { return (e.name === n && e.callback === c) }) === undefined) //Element has not yet been subscribed
             {
-                let notif = (typeof n === 'string') ? yeets.findIndex((e) => {e.name === n}) : yeets[n];
-                (yeets[notif] === undefined) ? yeets.push({
-                    
-                    name: String(n),
-                    notifiers: [
-                        a
-                    ]
-                }) : yeets[notif].notifiers.push(a);
-                a.yeets.push(objNotif)
+                let notif = (typeof n === 'string') ? yoinks.findIndex((e) => {return e.name === n}) : yoinks[n];
+                (yoinks[notif] === undefined) ? yoinks.push({name: String(n),notifiers: [a]}) : yoinks[notif].notifiers.push(a);
+                a.yoinks.push(objNotif)
                 a.addEventListener(n, c);
                 return true;
             }
@@ -162,8 +154,8 @@ window.Yeet = (function(){
         console.log(m, a)
     }
 
-    const yeet = (b, i=null , c=false, u=false, a) => {
-        if (yoinks.find((e) => { return (e.name === b && e.unique) }) !== undefined){
+    const yeet = (b, i=null, a , c=false, u=false) => {
+        if (yeets.find((e) => { return (e.name === b && e.unique) }) !== undefined){
             errors.push({
                 invoker:a,
                 yeet: b,
@@ -187,7 +179,7 @@ window.Yeet = (function(){
             });
             return false;
         }
-        if (u && yoinks.find((e) => { return e.name === b && e.initiator != a }) !== undefined) {
+        if (u && yeets.find((e) => { return e.name === b && e.initiator != a }) !== undefined) {
             errors.push({
                 invoker:a,
                 yeet: b,
@@ -205,27 +197,27 @@ window.Yeet = (function(){
             }
         });
         var index;
-        if ((index = yoinks.findIndex((e) => { return e.name === b})) === -1)
+        if ((index = yeets.findIndex((e) => { return e.name === b})) === -1)
             {
-                yoinks.push({
+                yeets.push({
                     name: b,
                     unique: u,
                     subscribers: () => {
                         return yeets.find((e) => {
                             return e.name === b
-                        }).notifiers.length
+                        }).yoinkers.length
                     },
-                    yeeters: [a]
+                    yoinkers: [a]
                 }) 
             }
         else
             {
-                if (yoinks[index].yeeters.indexOf(a) === -1){
-                    yoinks[index].yeeters.push(a)
+                if (yeets[index].yoinkers.indexOf(a) === -1){
+                    yeets[index].yoinkers.push(a)
                 }    
             }
         var notif;
-        if (notif = yeets.find((n) => {return n.name === b})){
+        if (notif = yoinks.find((n) => {return n.name === b;})){
             notif.notifiers.map((e) => {
                 e.dispatchEvent(yeet);
             })
