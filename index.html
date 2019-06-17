@@ -13,6 +13,7 @@
                 this.innerText = 'yay';
             }
             let div = document.querySelector('div');
+
             div.yoink('ok', n);
 
             div.onWhisper = function(e){
@@ -30,6 +31,7 @@
             });
             let button3 = document.querySelector('#clicker3');
             button3.addEventListener('click', function(e){
+                console.log('yeet');
                 this.yeet('ok', 'test')
             });
         })
