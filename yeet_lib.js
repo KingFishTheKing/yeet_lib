@@ -137,7 +137,10 @@ window.Yeet = (function(){
         if (typeof n !== 'string' && typeof n !== 'number') {
             throw new TypeError(`yeet identifier should be either a string representing it's name or the index number from the Activeyeetsarray`);
         } 
-        let objNotif = {name:n,callback:c}
+        let objNotif = {context: this, action : 'yoink', name : n, callback : c, Element : a};
+        if (a.yoinks instanceof Array || a.yoinks === undefined) {
+            a.yoinks = [];
+        }
         if (a.yoinks.find((e) => { return (e.name === n && e.callback === c) }) === undefined) //Element has not yet been subscribed
             {
                 let notif = (typeof n === 'string') ? yoinks.findIndex((e) => {return e.name === n}) : yoinks[n];
@@ -150,8 +153,29 @@ window.Yeet = (function(){
         return false;
     }
 
-    const unyoink = (m, a) => {
-        console.log(m, a)
+    const unyoink = (m, c, a) => {
+        let objNotif = {context: this, action : 'unyoink', name : m, callback : c, Element : a};
+        if (typeof m !== 'string' && typeof m !== 'number'){
+            errors.push({
+                Invoker: objNotif,
+                Error: new TypeError(`Expected Identifier to be of type string or number, got ${typeof m}`)    
+            })
+            return false;
+        }
+        if (typeof c !== 'function' && c !== undefined){
+            errors.push({
+               Invoker: objNotif,
+               Error: new TypeError(`Expected type of callback to be function, got ${typeof c}`)
+            })
+            return false;
+        }
+        if (typeof a !== 'object'){
+            errors.push({
+                Invoker:objNotif,
+                error: new TypeError(`Expected element to be of type object and be selectable in the DOM, got ${typeof a}`)
+            })
+            return false;
+        }
     }
 
     const yeet = (b, i=null, a , c=false, u=false) => {
@@ -229,7 +253,6 @@ window.Yeet = (function(){
 
     }
 
-
     /* === HELPER FUNCTIONALITY === */
     const lastError = () => {
         return errors[errors.length-1];
@@ -300,83 +323,29 @@ window.Yeet = (function(){
  * @version 0.0.1
  * @file yeet_lib.js
  * @description <b><i>The lord Yeethed and the Lord Yoinked away</i></b><p>Abstraction messaging layer, using custom event triggers in a (mostly) Pub/Sub pattern to make 121 or 12M communications easier</p>
+ *
  */
+
+/**
+ * @namespace Element
+ */
+
 
 //Bind properties and methods to Element prototype to make them native accessible to DOMElements
 Object.defineProperties(
     Element.prototype,
         {
             /**
-            * Array of current active yeets for this element
-            * 
-            * @member
-            * 
-            * @name Element.yeets
-            * 
-            * @returns {String[]}
-            * @example
-            * Element.yeets
-            */
-            'yeets':{
-                enumerable: true,
-                configurable: false,
-                writable: false,
-                value: []
-            },
-            /**
-             * Array of current active yoinks for this element
-             * 
-             * @member
-             * 
-             * @returns {String[]}
-             * @example
-             * Element.yoinks
-             */
-            'yoinks':{
-                enumerable: true,
-                configurable: false,
-                writable: false,
-                value: []
-            },
-            /**
-             * Array of errors occuring with yeets and/or yoinks for this element
-             * 
-             * @member
-             * 
-             * @returns {String[]}
-             * @example
-             * Elements.errors
-             */
-            'errors':{
-                enumerable: false,
-                configurable:false,
-                writable: false,
-                value: (function(){
-                    const errors = [];
-                    const push = (e) => {
-                        errors.push(e)
-                    }
-                    const lastError = () => {
-                        return errors[errors.length-1];
-                    }
-                    return({
-                        errors: errors,
-                        push: push,
-                        lastError: lastError
-                    })
-                })()
-            },
-            /**
              * Bind a callback action to execute when the element gets whispered to
+             * @name onWhisper
              * @function
-             * 
-             * 
+             * @memberof Element
              */
             'onWhisper':{
                 enumerable: true,
                 configurable: false,
                 messageHandler: () => {},
-                get: function(e){
+                get: function(){
                 },
                 set: function(e){
                     if (e instanceof Function){
@@ -391,8 +360,9 @@ Object.defineProperties(
             },
             /**
              * Send a whisper to a specific element
-             * @function 
-             * 
+             * @name sendWhisper
+             * @function
+             * @memberof Element
              */
             'sendWhisper':{
                 enumerable: true,
@@ -405,10 +375,10 @@ Object.defineProperties(
                 }
             },
             /**
-            * Request notifications from yeets.
-            * 
-            * @function
+            * Request notifications from yeets
             * @name yoink
+            * @function
+            * @memberof Element
             * @param { String | Number } n - ID or identifier of the yeet, case sensitive if using identifier, ID must be the ID as per activeYeets-array
             * @param { Function } c - Callback function 
             * @param { Element= } a - Element requesting notification
@@ -432,7 +402,9 @@ Object.defineProperties(
             * 
             * @function
             * @name unyoink
+            * @memberof Element
             * @param { String | Number } m - Identifier of index in activeYoinks of the yeet
+            * @param { String | Function=} c - Callback function to revoke (if none is provided, all are removed)
             * @param { Element } a - Element requesting cancellation
             * 
             * @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
@@ -455,7 +427,7 @@ Object.defineProperties(
             * @function
             * 
             * @name yeet
-            * 
+            * @memberof Element
             * @param { String } b - Identifier to which yoinks can be coupled, case sensitive
             * @param { * } i - Any additional information you want to pass through to observing elements
             * @param { Object= } a - Element which will throw the yoink 
@@ -484,7 +456,7 @@ Object.defineProperties(
             * @function
             * 
             * @name unyeet
-            * 
+            * @memberof Element
             * @param { String | Number } c - Identifier of index in activeYeets of the yeet
             * @param { Element } a - Element requesting cancellation
             * @param { Boolean } [u=true] - Should elements listening for this yoink be notified of the closure, done via complete flag
@@ -505,3 +477,21 @@ Object.defineProperties(
             }
         } 
 );
+/**
+ * Array of binded yeets on an element
+ * @memberof Element
+ * @name yeets
+ * @returns { Object[] } Returns an array of object containing the name of yoink and callback assigned to it
+ */
+/**
+ * Array of binded yoinks on an element
+ * @memberof Element
+ * @name yoinks
+ * @returns { Object[] } Returns an array objects with properties of the yoinks
+ */
+/**
+ * Array of errors which have occured on the element
+ * @memberof Element
+ * @name errors
+ * @returns { Object[] } Returns an array of object containing the name of the event and error message
+ */
