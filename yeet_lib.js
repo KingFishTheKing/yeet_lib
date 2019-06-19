@@ -155,26 +155,50 @@ window.Yeet = (function(){
     const unyoink = (m, c, a) => {
         let objNotif = {context: this, action : 'unyoink', name : m, callback : c, Element : a};
         if (typeof m !== 'string' && typeof m !== 'number'){
-            errors.push({
+            a.errors.push({
                 Invoker: objNotif,
                 Error: new TypeError(`Expected Identifier to be of type string or number, got ${typeof m}`)    
             })
             return false;
         }
         if (typeof c !== 'function' && c !== undefined){
-            errors.push({
+            a.errors.push({
                Invoker: objNotif,
                Error: new TypeError(`Expected type of callback to be function, got ${typeof c}`)
             })
             return false;
         }
         if (typeof a !== 'object'){
-            errors.push({
+            a.errors.push({
                 Invoker:objNotif,
                 error: new TypeError(`Expected element to be of type object and be selectable in the DOM, got ${typeof a}`)
             })
             return false;
         }
+        let yoinkName = (typeof m === 'string') ? m : yoinks[m].name;
+        if (c === undefined){
+            a.yoinks = a.yoinks.filter((r, i) => {
+                return r.name !== yoinkName
+            })
+        }
+        else{
+            a.yoinks.splice(a.yoinks.findIndex((r) => {
+                return r.name === yoinkName;
+            }), 1);
+        }
+        var tempID = null;
+        let elemID = yoinks.find((e, i) => {
+            if (e.name === yoinkName){
+                tempID = i;
+                return true;
+            }
+            else {return false}    
+        }).notifiers.findIndex((e) => {
+            return e === a
+        });
+        yoinks[tempID].notifiers.splice(elemID, 1);
+        
+        
     }
 
     const yeet = (b, i=null, a , c=false, u=false) => {
