@@ -12,19 +12,19 @@ An abstraction layer which takes away the burden of tracking where bindings are 
 
 __Why not Observables, Proxies, MutationObservers or Promises?__
 
-> Well because:  
+Well because:  
 a) Observables are (at this time) not native avaible for JS, but could prove to be a worthy successor to this project.  
 b) Promises are a pretty much one use only, not much use if you want to distribute non direct messages  
 c) Proxies are not supported in IE (and this is still a big marketshare unfortunatly) and are not globally implemented (i.e. no central global mediator, nodes needs to know eachother)  
 d) MutationsObservers havbe a limited scope of mutations they can watch, do not support binding to external events directly 
 
 __Pros__  
-- Not a framework, not even a library, so implementations can be done however you want it to be done
+>- Not a framework, not even a pure library, so implementations can be done however you want it to be done
 - Central global mediator
 - Asynchronious behavior
 
 __Cons__
-- Not yet fully (not even half to be honest) tested so use with caution
+>- Not yet fully (not even half to be honest) tested so use with caution
 - Possible performance hit when overused due to very much not optimized code
 - Relies on prototype extending of Element prototype, if you're not into that (like a lot of people are) I'm sorry
 
