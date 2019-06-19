@@ -20,13 +20,13 @@ d) MutationsObservers havbe a limited scope of mutations they can watch, do not 
 
 __Pros__  
 >- Not a framework, not even a pure library, so implementations can be done however you want it to be done
-- Central global mediator
-- Asynchronious behavior
+>- Central global mediator
+>- Asynchronious behavior
 
 __Cons__
 >- Not yet fully (not even half to be honest) tested so use with caution
-- Possible performance hit when overused due to very much not optimized code
-- Relies on prototype extending of Element prototype, if you're not into that (like a lot of people are) I'm sorry
+>- Possible performance hit when overused due to very much not optimized code
+>- Relies on prototype extending of Element prototype, if you're not into that (like a lot of people are) I'm sorry
 
 ### What's to come  
 - Fully functional and tested 'library'
