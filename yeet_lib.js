@@ -123,7 +123,6 @@
 /**
  * 
  * @namespace Yeet
- * 
  */
 window.Yeet = (function(){
     const yeets = [];
@@ -145,7 +144,7 @@ window.Yeet = (function(){
             {
                 let notif = (typeof n === 'string') ? yoinks.findIndex((e) => {return e.name === n}) : yoinks[n];
                 (yoinks[notif] === undefined) ? yoinks.push({name: String(n),notifiers: [a]}) : yoinks[notif].notifiers.push(a);
-                a.yoinks.push(objNotif)
+                a.yoinks.push(objNotif);
                 a.addEventListener(n, c);
                 return true;
             }
@@ -182,8 +181,7 @@ window.Yeet = (function(){
         if (yeets.find((e) => { return (e.name === b && e.unique) }) !== undefined){
             errors.push({
                 invoker:a,
-                yeet: b,
-                error: new SyntaxError(`Encountered existing notification with provided identifier which has the unqiue flag`)
+                Error: new SyntaxError(`Encountered existing notification with provided identifier which has the unqiue flag`)
             });
             return false; 
         }
@@ -246,6 +244,19 @@ window.Yeet = (function(){
                 e.dispatchEvent(yeet);
             })
         }
+        (a.yeets) ? a.yeets.push({
+            name:b,
+            event: yeet,
+            timing: Date.now(),
+            complete: c,
+            unique: u 
+        }) : a.yeets = [{
+            name:b,
+            event: yeet,
+            timing: Date.now(), 
+            complete: c,
+            unique: u 
+        }] ;
         return true;
     }
 
@@ -257,28 +268,31 @@ window.Yeet = (function(){
     const lastError = () => {
         return errors[errors.length-1];
     }
+    const hasYeet = (y, e) => {
+        return(e.yeets) ? !!e.yeets.find((i) => {
+            console.log(i.name, y)
+            return i.name === y;
+        }) :  false;
+    }
+    const hasYoink = (y, e) => {
+        return (e.yoinks) ? !!e.yoinks.find((i) => {
+            return i.name === y;
+        }) : false;
+    }
 
     /* -===- EXPOSE FRONT FACING VARIABLES AND METHODS */
     return {
         /**
-         * Array of all the active listeners at the time
-         * @member
+         * Array of all the (global) active listeners at the time
          * @memberof Yeet
-         * @return {String[]}
+         * @name Base
+         * @property { Object[] } activeYeets - An array of objects containing the name of (global) yeets and element which throws it<br /><b>[{name: *, unique: true|false, subscribers: #amount, yoinkers:[*, *, ...]}, {..}, {..}, ..]</b>
+         * @property { Object[] } activeYoinks - An array of objects containing the name of (global) yoinks and elements listening for it<br /><b>[{name: *, notifiers: [*, *, ..]}, {..}, {..}, ..]</b>
+         * @property { Object[] } errors -An array of objects containing all errors which have occured and their invoker<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
+         * 
          */
         activeYeets: yeets,
-        /**
-         * Array of current registered Yoinks
-         * @member
-         * @memberof Yeet
-         * @returns {String[]}
-         */
         activeYoinks: yoinks,
-        /**
-         * Array of errors which have occured
-         * @memberof Yeet
-         * @returns {String[]}
-         */
         errors: errors,
         /**
          * The last error which occured
@@ -288,33 +302,47 @@ window.Yeet = (function(){
          */
         lastError: lastError,
         /**
-        * Alias of native yoink but pulled in the Yeet namespace, which is globally avaible
+        * Alias of native yoink but pulled in the Yeet namespace
         * @memberof Yeet
-        * @function
+        * @method
         * @alias yoink
         */
         yoink: yoink,
         /**
-        * Alias of native unyoink but pulled in the Yeet namespace, which is globally avaible
+        * Alias of native unyoink but pulled in the Yeet namespace
         * @memberof Yeet
-        * @function
+        * @method
         * @alias unyoink
         */
         unyoink: unyoink,
         /**
-        * Alias of native yeet but pulled in the Yeet namespace, which is globally avaible
+        * Alias of native yeet but pulled in the Yeet namespace
         * @memberof Yeet
-        * @function
+        * @method
         * @alias yeet
         */
         yeet: yeet,
         /**
-        * Alias of native yoink but pulled in the Yeet namespace, which is globally avaible
+        * Alias of native yoink but pulled in the Yeet namespace
         * @memberof Yeet
-        * @function
+        * @method
         * @alias unyeet
         */
         unyeet: unyeet,
+        /**
+         * Alias of native hasYeet but pulled in the Yeet namespace
+         * @memberof Yeet
+         * @method
+         * @alias hasYeet
+         */
+        hasYeet: hasYeet,
+        /**
+         * Alias of native hasYionk but pulled in the Yeet namespace
+         * @memberof Yeet
+         * @method
+         * @alias hasYoink
+         */
+        hasYoink: hasYoink
     }
 })();
 
@@ -327,7 +355,7 @@ window.Yeet = (function(){
  */
 
 /**
- * @namespace Element
+ * @class Element
  */
 
 
@@ -338,10 +366,10 @@ Object.defineProperties(
             /**
              * Bind a callback action to execute when the element gets whispered to
              * @name onWhisper
-             * @function
+             * @method
              * @memberof Element
              */
-            'onWhisper':{
+            onWhisper:{
                 enumerable: true,
                 configurable: false,
                 messageHandler: () => {},
@@ -361,10 +389,10 @@ Object.defineProperties(
             /**
              * Send a whisper to a specific element
              * @name sendWhisper
-             * @function
+             * @method
              * @memberof Element
              */
-            'sendWhisper':{
+            sendWhisper:{
                 enumerable: true,
                 configurable: false,
                 get: function(){
@@ -377,7 +405,7 @@ Object.defineProperties(
             /**
             * Request notifications from yeets
             * @name yoink
-            * @function
+            * @method
             * @memberof Element
             * @param { String | Number } n - ID or identifier of the yeet, case sensitive if using identifier, ID must be the ID as per activeYeets-array
             * @param { Function } c - Callback function 
@@ -389,7 +417,7 @@ Object.defineProperties(
             * Element.yoink('ID', console.log) //Native element approach
             * window.Yeet.yoink('ID', console.log, document.querySelector('#div')) //Subscrive another element
             */
-            'yoink':{
+            yoink:{
                 enumerable: true,
                 configurable: false,
                 writable: false,
@@ -400,7 +428,7 @@ Object.defineProperties(
             /**
             * Cancel updates from yoinks
             * 
-            * @function
+            * @method
             * @name unyoink
             * @memberof Element
             * @param { String | Number } m - Identifier of index in activeYoinks of the yeet
@@ -413,7 +441,7 @@ Object.defineProperties(
             * Element.unyoink('ID') //Native element approach
             * window.Yeet.yoink('ID', document.querySelector('#div')) //Unsubscribe another element
             */
-            'unyoink':{
+            unyoink:{
                 enumerable: true,
                 configurable: false,
                 writable: false,
@@ -424,7 +452,7 @@ Object.defineProperties(
             /**
             * Throw new yoink which can be captured
             * 
-            * @function
+            * @method
             * 
             * @name yeet
             * @memberof Element
@@ -442,7 +470,7 @@ Object.defineProperties(
             * window.Yeet.yeet('TestYeet', {'message': 'test'},document.querySelector('#div')) //Use global space to yeet from another element
             * window.Yeet.yeet('TestYeet', {'message': 'test'},document.querySelector('#div'), true, true) //Use global space to yeet with complete / uniqeu flags 
             */
-            'yeet':{
+            yeet:{
                 enumerable: true,
                 configurable: false,
                 writable: false,
@@ -453,7 +481,7 @@ Object.defineProperties(
             /**
             * Cancel yoink stream
             * 
-            * @function
+            * @method
             * 
             * @name unyeet
             * @memberof Element
@@ -467,31 +495,69 @@ Object.defineProperties(
             * Element.unyoink('ID') //Native element approach
             * window.Yeet.yoink('ID', document.querySelector('#div')) //Mute another element
             */
-            'unyeet':{
+            unyeet:{
                 enumerable: true,
                 configurable: false,
                 writable:false,
                 value: function(b, i, c, u) {
                     return window.Yeet.unyeet(b, i, this, c, u);
                 }
+            },
+            /**
+            * Check if a certain element has a certain yeet attatched
+            * 
+            * @method
+            * 
+            * @name hasYeet
+            * @memberof Element
+            * @param { String } c - Identifier of the yeet
+            * @param { Element } a - Element to check
+            * 
+            * @returns { Boolean } Returns true or false
+            * 
+            * @example
+            * Element.hasYeet('ID') //Native element approach
+            * window.Yeet.hasYeet('ID', document.querySelector('#div')) //Check another element
+            */
+            hasYeet: {
+                enumerable:true,
+                configurable:false,
+                writable: false,
+                value: function(i){
+                    return window.Yeet.hasYeet(i, this);
+                }
+            },
+            /**
+            * Check if a certain element has a certain yoink listener
+            * 
+            * @method
+            * 
+            * @name hasYoink
+            * @memberof Element
+            * @param { String } c - Identifier of the yoink
+            * @param { Element } a - Element to check
+            * 
+            * @returns { Boolean } Returns true or false
+            * 
+            * @example
+            * Element.hasYoink('ID') //Native element approach
+            * window.Yeet.hasYoink('ID', document.querySelector('#div')) //Check another element
+            */
+            hasYoink: {
+                enumerable:true,
+                configurable:false,
+                writable: false,
+                value: function(i){
+                    return window.Yeet.hasYoink(i, this);
+                }
             }
         } 
 );
 /**
- * Array of binded yeets on an element
+ * Properties containing collections on elements
  * @memberof Element
- * @name yeets
- * @returns { Object[] } Returns an array of object containing the name of yoink and callback assigned to it
- */
-/**
- * Array of binded yoinks on an element
- * @memberof Element
- * @name yoinks
- * @returns { Object[] } Returns an array objects with properties of the yoinks
- */
-/**
- * Array of errors which have occured on the element
- * @memberof Element
- * @name errors
- * @returns { Object[] } Returns an array of object containing the name of the event and error message
+ * @name Base
+ * @property { Object[] } yeets - An array of objects containing the name of yoink and callback assigned to it<br /><b>[{name:*, callback: *}, {..}, {..}, ..]</b>
+ * @property { Object[] } yoinks - An array objects with properties of the yoinks<br /><b>[{Element: <this>, action: 'yoink|yeet', callback:fnc, context: *, name: <Identifier>}, {..}, {..}, ..]</b>
+ * @property { Object[] } Errors - An array of objects containing the name of the event and error message<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
  */
