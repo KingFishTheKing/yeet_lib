@@ -120,10 +120,7 @@
 #  _______________________________________________________________________________________________________________________________________________________
 #  _______________________________________________________________________________________________________________________________________________________
 */
-/**
- * 
- * @namespace Yeet
- */
+
 window.Yeet = (function(){
     const yeets = [];
     const yoinks = [];
@@ -284,8 +281,8 @@ window.Yeet = (function(){
         return true;
     }
 
-    const unyeet = (c, a, u=true) => {
-
+    const unyeet = (c, u=true, a) => {
+        //Removes the Yeet from activeyeets (or the element f multiple elements are sending) and send out a complete flag if set to true
     }
 
     /* === HELPER FUNCTIONALITY === */
@@ -306,93 +303,24 @@ window.Yeet = (function(){
 
     /* -===- EXPOSE FRONT FACING VARIABLES AND METHODS */
     return {
-        /**
-         * Array of all the (global) active listeners at the time
-         * @memberof Yeet
-         * @name Base
-         * @property { Object[] } activeYeets - An array of objects containing the name of (global) yeets and element which throws it<br /><b>[{name: *, unique: true|false, subscribers: #amount, yoinkers:[*, *, ...]}, {..}, {..}, ..]</b>
-         * @property { Object[] } activeYoinks - An array of objects containing the name of (global) yoinks and elements listening for it<br /><b>[{name: *, notifiers: [*, *, ..]}, {..}, {..}, ..]</b>
-         * @property { Object[] } errors -An array of objects containing all errors which have occured and their invoker<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
-         * 
-         */
         activeYeets: yeets,
         activeYoinks: yoinks,
         errors: errors,
-        /**
-         * The last error which occured
-         * @memberof Yeet
-         * @method
-         * @returns {String}
-         */
         lastError: lastError,
-        /**
-        * Alias of native yoink but pulled in the Yeet namespace
-        * @memberof Yeet
-        * @method
-        * @alias yoink
-        */
         yoink: yoink,
-        /**
-        * Alias of native unyoink but pulled in the Yeet namespace
-        * @memberof Yeet
-        * @method
-        * @alias unyoink
-        */
         unyoink: unyoink,
-        /**
-        * Alias of native yeet but pulled in the Yeet namespace
-        * @memberof Yeet
-        * @method
-        * @alias yeet
-        */
         yeet: yeet,
-        /**
-        * Alias of native yoink but pulled in the Yeet namespace
-        * @memberof Yeet
-        * @method
-        * @alias unyeet
-        */
         unyeet: unyeet,
-        /**
-         * Alias of native hasYeet but pulled in the Yeet namespace
-         * @memberof Yeet
-         * @method
-         * @alias hasYeet
-         */
         hasYeet: hasYeet,
-        /**
-         * Alias of native hasYionk but pulled in the Yeet namespace
-         * @memberof Yeet
-         * @method
-         * @alias hasYoink
-         */
         hasYoink: hasYoink
     }
 })();
-
-/**
- * @author Yoram Vleugels
- * @version 0.0.1
- * @file yeet_lib.js
- * @description <b><i>The lord Yeethed and the Lord Yoinked away</i></b><p>Abstraction messaging layer, using custom event triggers in a (mostly) Pub/Sub pattern to make 121 or 12M communications easier</p>
- *
- */
-
-/**
- * @class Element
- */
 
 
 //Bind properties and methods to Element prototype to make them native accessible to DOMElements
 Object.defineProperties(
     Element.prototype,
         {
-            /**
-             * Bind a callback action to execute when the element gets whispered to
-             * @name onWhisper
-             * @method
-             * @memberof Element
-             */
             onWhisper:{
                 enumerable: true,
                 configurable: false,
@@ -410,12 +338,6 @@ Object.defineProperties(
                     }
                 }
             },
-            /**
-             * Send a whisper to a specific element
-             * @name sendWhisper
-             * @method
-             * @memberof Element
-             */
             sendWhisper:{
                 enumerable: true,
                 configurable: false,
@@ -426,21 +348,6 @@ Object.defineProperties(
                     this.dispatchEvent(new CustomEvent('whisper', {detail:e}));
                 }
             },
-            /**
-            * Request notifications from yeets
-            * @name yoink
-            * @method
-            * @memberof Element
-            * @param { String | Number } n - ID or identifier of the yeet, case sensitive if using identifier, ID must be the ID as per activeYeets-array
-            * @param { Function } c - Callback function 
-            * @param { Element= } a - Element requesting notification
-            * 
-            * @return { Boolean } Returns true or false, if false, errors can be checked with Element.errors.lastError()
-            * 
-            * @example
-            * Element.yoink('ID', console.log) //Native element approach
-            * window.Yeet.yoink('ID', console.log, document.querySelector('#div')) //Subscrive another element
-            */
             yoink:{
                 enumerable: true,
                 configurable: false,
@@ -449,22 +356,6 @@ Object.defineProperties(
                     return window.Yeet.yoink(n, c, this);
                 }
             },
-            /**
-            * Cancel updates from yoinks
-            * 
-            * @method
-            * @name unyoink
-            * @memberof Element
-            * @param { String | Number } m - Identifier of index in activeYoinks of the yeet
-            * @param { String | Function=} c - Callback function to revoke (if none is provided, all are removed)
-            * @param { Element } a - Element requesting cancellation
-            * 
-            * @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
-            * 
-            * @example
-            * Element.unyoink('ID') //Native element approach
-            * window.Yeet.yoink('ID', document.querySelector('#div')) //Unsubscribe another element
-            */
             unyoink:{
                 enumerable: true,
                 configurable: false,
@@ -473,27 +364,6 @@ Object.defineProperties(
                     return window.Yeet.unyoink(n, c, this);
                 }
             },
-            /**
-            * Throw new yoink which can be captured
-            * 
-            * @method
-            * 
-            * @name yeet
-            * @memberof Element
-            * @param { String } b - Identifier to which yoinks can be coupled, case sensitive
-            * @param { * } i - Any additional information you want to pass through to observing elements
-            * @param { Object= } a - Element which will throw the yoink 
-            * @param { Boolean } [c=false] - Complete flag, indicates if the element has completed all it's yeets, does not decouple 
-            * @param { Boolean } [u=false] - Unique flag, indicates if the given identifier should be unique, so only this element can use it 
-            * 
-            * @return { Boolean } Returns true or false, if false errors can be checked with {@link Element.error.lastError()}
-            * 
-            * @example
-            * Element.yeet('TestYeet', {'message': 'test'}) //Native element yoink with identifier 'TestYeet'
-            * Element.yeet('TestYeet', {'message': 'test'}, this, true, true) //When using Complete and/or unique flags it's best to provide all arguments
-            * window.Yeet.yeet('TestYeet', {'message': 'test'},document.querySelector('#div')) //Use global space to yeet from another element
-            * window.Yeet.yeet('TestYeet', {'message': 'test'},document.querySelector('#div'), true, true) //Use global space to yeet with complete / uniqeu flags 
-            */
             yeet:{
                 enumerable: true,
                 configurable: false,
@@ -502,47 +372,14 @@ Object.defineProperties(
                     return window.Yeet.yeet(b, i, this, c, u);
                 }
             },
-            /**
-            * Cancel yoink stream
-            * 
-            * @method
-            * 
-            * @name unyeet
-            * @memberof Element
-            * @param { String | Number } c - Identifier of index in activeYeets of the yeet
-            * @param { Element } a - Element requesting cancellation
-            * @param { Boolean } [u=true] - Should elements listening for this yoink be notified of the closure, done via complete flag
-            * 
-            * @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
-            * 
-            * @example
-            * Element.unyoink('ID') //Native element approach
-            * window.Yeet.yoink('ID', document.querySelector('#div')) //Mute another element
-            */
             unyeet:{
                 enumerable: true,
                 configurable: false,
                 writable:false,
-                value: function(b, i, c, u) {
-                    return window.Yeet.unyeet(b, i, this, c, u);
+                value: function(c, u) {
+                    return window.Yeet.unyeet(c, u, this);
                 }
             },
-            /**
-            * Check if a certain element has a certain yeet attatched
-            * 
-            * @method
-            * 
-            * @name hasYeet
-            * @memberof Element
-            * @param { String } c - Identifier of the yeet
-            * @param { Element } a - Element to check
-            * 
-            * @returns { Boolean } Returns true or false
-            * 
-            * @example
-            * Element.hasYeet('ID') //Native element approach
-            * window.Yeet.hasYeet('ID', document.querySelector('#div')) //Check another element
-            */
             hasYeet: {
                 enumerable:true,
                 configurable:false,
@@ -551,22 +388,6 @@ Object.defineProperties(
                     return window.Yeet.hasYeet(i, this);
                 }
             },
-            /**
-            * Check if a certain element has a certain yoink listener
-            * 
-            * @method
-            * 
-            * @name hasYoink
-            * @memberof Element
-            * @param { String } c - Identifier of the yoink
-            * @param { Element } a - Element to check
-            * 
-            * @returns { Boolean } Returns true or false
-            * 
-            * @example
-            * Element.hasYoink('ID') //Native element approach
-            * window.Yeet.hasYoink('ID', document.querySelector('#div')) //Check another element
-            */
             hasYoink: {
                 enumerable:true,
                 configurable:false,
@@ -577,11 +398,205 @@ Object.defineProperties(
             }
         } 
 );
+//General
 /**
- * Properties containing collections on elements
- * @memberof Element
- * @name Base
- * @property { Object[] } yeets - An array of objects containing the name of yoink and callback assigned to it<br /><b>[{name:*, callback: *}, {..}, {..}, ..]</b>
- * @property { Object[] } yoinks - An array objects with properties of the yoinks<br /><b>[{Element: <this>, action: 'yoink|yeet', callback:fnc, context: *, name: <Identifier>}, {..}, {..}, ..]</b>
- * @property { Object[] } Errors - An array of objects containing the name of the event and error message<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
+* @author Yoram Vleugels
+* @version 0.0.1
+* @file yeet_lib.js
+* @description <b><i>The lord Yeethed and the Lord Yoinked away</i></b><p>Abstraction messaging layer, using custom event triggers in a (mostly) Pub/Sub pattern to make 121 or 12M communications easier</p>
+* @copyright Yoram Vleugels
+* @license GPL-3.0
+*/
+//Class DOMElement
+/**
+* @description Native property & functions on DOM elements
+* @class DOMElement
+*/
+/** Properties containing collections on elements
+* @memberof DOMElement
+* @name Base
+* @property { Object[] } yeets - An array of objects containing the name of yoink and callback assigned to it<br /><b>[{name:*, callback: *}, {..}, {..}, ..]</b>
+* @property { Object[] } yoinks - An array objects with properties of the yoinks<br /><b>[{Element: <this>, action: 'yoink|yeet', callback:fnc, context: *, name: <Identifier>}, {..}, {..}, ..]</b>
+* @property { Object[] } Errors - An array of objects containing the name of the event and error message<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
+*/
+/**
+* Bind a callback action to execute when the element gets whispered to
+* @name onWhisper
+* @method
+* @memberof DOMElement
+*/
+/**
+* Send a whisper to a specific element
+* @name sendWhisper
+* @method
+* @memberof DOMElement
+*/
+/**
+* Request notifications from yeets
+* @name yoink
+* @method
+* @memberof DOMElement
+* @param { String | Number } n - ID or identifier of the yeet, case sensitive if using identifier, ID must be the ID as per activeYeets-array
+* @param { Function } c - Callback function 
+* @param { Element= } a - Element requesting notification
+* 
+* @return { Boolean } Returns true or false, if false, errors can be checked with Element.errors.lastError()
+* 
+* @example
+* Element.yoink('ID', console.log)
+*/
+/**
+* Cancel updates from yeets
+* 
+* @method
+* @name unyoink
+* @memberof DOMElement
+* @param { String | Number } m - Identifier of index in activeYoinks of the yeet
+* @param { String | Function=} c - Callback function to revoke (if none is provided, all are removed)
+* @param { Element } a - Element requesting cancellation
+* 
+* @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
+* 
+* @example
+* Element.unyoink('ID')
+*/
+/**
+* Throw new yeet which can be captured
+* 
+* @method
+* 
+* @name yeet
+* @memberof DOMElement
+* @param { String } b - Identifier to which yoinks can be coupled, case sensitive
+* @param { * } i - Any additional information you want to pass through to observing elements
+* @param { Object= } a - Element which will throw the yoink 
+* @param { Boolean } [c=false] - Complete flag, indicates if the element has completed all it's yeets, does not decouple 
+* @param { Boolean } [u=false] - Unique flag, indicates if the given identifier should be unique, so only this element can use it 
+* 
+* @return { Boolean } Returns true or false, if false errors can be checked with {@link Element.error.lastError()}
+* 
+* @example
+* Element.yeet('TestYeet', {'message': 'test'})
+* Element.yeet('TestYeet', {'message': 'test'}, this, true, true) //When using Complete and/or unique flags it's best to provide all arguments
+*/
+/**
+* Cancel yeet stream (for calling element only), <br />If no other element have been found which have used this yeet stream unop unyeet the yeet will dissapear from the activeYeets array.<br /> <br /><b>*Note: if the unqiue flag was set, this will be removed upon unyeeting, thus releasing it to other elements</b>, <small>if you do not wish to do this you can simply not unyeet the element.</small><br />
+<b>Setting the complete flag will not prevent other elements from still yeeting this event</b>, <small>it's merely a tool to signal to yoinkers that 1 element has completed it's yeets</small>
+* 
+* @method
+* 
+* @name unyeet
+* @memberof DOMElement
+* @param { String | Number } c - Identifier of index in activeYeets of the yeet
+* @param { Boolean } [u=true] - Should elements listening for this yoink be notified of the closure, done via complete flag
+* @param { Element } a - Element requesting cancellation
+* 
+* @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
+*
+* @example
+* Element.unyoink('ID')
+*/
+/**
+* Check if a certain element has a certain yeet attatched
+* 
+* @method
+* 
+* @name hasYeet
+* @memberof DOMElement
+* @param { String } c - Identifier of the yeet
+* @param { Element } a - Element to check
+* 
+* @returns { Boolean } Returns true or false
+* 
+* @example
+* Element.hasYeet('ID')
+*/
+/**
+* Check if a certain element has a certain yoink listener
+* 
+* @method
+* 
+* @name hasYoink
+* @memberof DOMElement
+* @param { String } c - Identifier of the yoink
+* @param { Element } a - Element to check
+* 
+* @returns { Boolean } Returns true or false
+* 
+* @example
+* Element.hasYoink('ID')
+*/
+
+//Namespace Yeet
+/**
+* @description alias of native functions but pulled into global namespace to make them avaible for other elements
+* @namespace Yeet
+*/
+/** Array of all the (global) active listeners at the time
+* @memberof Yeet
+* @name Base
+* @property { Object[] } activeYeets - An array of objects containing the name of (global) yeets and element which throws it<br /><b>[{name: *, unique: true|false, subscribers: #amount, yoinkers:[*, *, ...]}, {..}, {..}, ..]</b>
+* @property { Object[] } activeYoinks - An array of objects containing the name of (global) yoinks and elements listening for it<br /><b>[{name: *, notifiers: [*, *, ..]}, {..}, {..}, ..]</b>
+* @property { Object[] } errors -An array of objects containing all errors which have occured and their invoker<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
+*/
+/**
+* The last error which occured
+* @memberof Yeet
+* @method
+* @returns {String}
+*/
+/**
+* Alias of native yoink but pulled in the Yeet namespace
+* @memberof Yeet
+* @name yoink
+* @method
+* @alias yoink
+* @example
+* window.Yeet.yoink('ID', console.log, document.querySelector('#div'))
+*/
+/**
+* Alias of native unyoink but pulled in the Yeet namespace
+* @memberof Yeet
+* @name unyoink
+* @method
+* @alias unyoink
+* @example
+* window.Yeet.yoink('ID', document.querySelector('#div'))
+*/
+/**
+* Alias of native yeet but pulled in the Yeet namespace
+* @memberof Yeet
+* @name yeet
+* @method
+* @alias yeet
+* @example
+* window.Yeet.yeet('TestYeet', {'message': 'test'},document.querySelector('#div'))
+* window.Yeet.yeet('TestYeet', {'message': 'test'},document.querySelector('#div'), true, true) 
+*/
+/**
+* Alias of native yoink but pulled in the Yeet namespace
+* @memberof Yeet
+* @name unyeet
+* @method
+* @alias unyeet
+* @example
+* window.Yeet.yoink('ID', document.querySelector('#div'))
+*/
+/**
+ * Alias of native hasYeet but pulled in the Yeet namespace
+ * @memberof Yeet
+ * @name hasYeet
+ * @method
+ * @alias hasYeet
+ * @example
+ * window.Yeet.hasYeet('ID', document.querySelector('#div'))
+ */
+/**
+ * Alias of native hasYionk but pulled in the Yeet namespace
+ * @memberof Yeet
+ * @name hasYoink
+ * @method
+ * @alias hasYoink
+ * @example
+ * window.Yeet.hasYoink('ID', document.querySelector('#div'))
  */
