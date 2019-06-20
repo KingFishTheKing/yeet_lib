@@ -1,0 +1,33 @@
+{
+  "name": "yeet",
+  "version": "0.0.1",
+  "description": "A messaging abstraction layer to facilitate communication between object and elements, inspired by Angular's two way binding",
+  "main": "yeet_lib.js",
+  "dependencies": {},
+  "devDependencies": {
+    "docdash": "^1.1.1"
+  },
+  "scripts": {
+    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc/jsdoc.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KingFishTheKing/yeet_lib.git"
+  },
+  "keywords": [
+    "Javascript",
+    "events",
+    "communication",
+    "messaging",
+    "abstraction-layer",
+    "pubsub",
+    "121",
+    "12M"
+  ],
+  "author": "Yoram Vleugels",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/KingFishTheKing/yeet_lib/issues"
+  },
+  "homepage": "https://github.com/KingFishTheKing/yeet_lib#readme"
+}
