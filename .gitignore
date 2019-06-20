@@ -1,6 +1,8 @@
 /out
 /node_modules
 /tutorial
+/build
+/public
 *.html
 *.log
 logs
