@@ -1,6 +1,6 @@
 /out
 /node_modules
-index.html
+/tutorial
 *.html
 *.log
 logs

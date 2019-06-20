@@ -1,0 +1,24 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": "./yeet_lib.js",
+        "excludePattern": "(node_modules/|docs|out/)"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "opts": {
+        "template": "./node_modules/docdash/",
+        "encoding": "utf8",
+        "destination": "out/",
+        "recurse": true,
+        "verbose": true,
+        "tutorials": "./tutorial/"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    }
+}

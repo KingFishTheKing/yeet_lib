@@ -120,7 +120,7 @@
 #  _______________________________________________________________________________________________________________________________________________________
 #  _______________________________________________________________________________________________________________________________________________________
 */
-
+'use strict'
 window.Yeet = (function(){
     const yeets = [];
     const yoinks = [];
@@ -282,7 +282,48 @@ window.Yeet = (function(){
     }
 
     const unyeet = (c, u=true, a) => {
-        //Removes the Yeet from activeyeets (or the element f multiple elements are sending) and send out a complete flag if set to true
+        if (typeof c !== 'string' && typeof c !== 'number'){
+            errors.push({
+                invoker: a,
+                error: new TypeError(`Expected identifier to be of type string or number, got ${typeof c}`) 
+            })
+            return false;
+        }
+        if (typeof u !== 'boolean'){
+            errors.push({
+                invoker: a,
+                error: new TypeError(`Expected complete flag to be of type boolean, got ${typeof u}`) 
+            })
+            return false;
+        }
+        if (typeof a !== 'object'){
+            errors.push({
+                invoker: a,
+                error: new TypeError(`Expected complete flag to be of type object, got ${typeof a}`) 
+            })
+            return false;
+        }
+        let index = (typeof c === 'string') ? yeets.findIndex((e) => {return e.name === c }) : c
+        if (index === -1){
+            errors.push({
+                invokerer:a, 
+                error: new ReferenceError(`No such yeet found`)
+            });
+            return false;
+        }
+        else{
+            if(yeets[index].yoinkers.length === 1){
+                yeets.splice(index, 1);
+                return true;
+            } 
+            else{
+                yeets[index].yoinkers.splice(yeets[index].yoinkers.find((e) => {
+                    e.name === c
+                }),1);
+                return true;
+            }
+        }
+
     }
 
     /* === HELPER FUNCTIONALITY === */
@@ -398,6 +439,7 @@ Object.defineProperties(
             }
         } 
 );
+
 //General
 /**
 * @author Yoram Vleugels
@@ -417,7 +459,6 @@ Object.defineProperties(
 * @name Base
 * @property { Object[] } yeets - An array of objects containing the name of yoink and callback assigned to it<br /><b>[{name:*, callback: *}, {..}, {..}, ..]</b>
 * @property { Object[] } yoinks - An array objects with properties of the yoinks<br /><b>[{Element: <this>, action: 'yoink|yeet', callback:fnc, context: *, name: <Identifier>}, {..}, {..}, ..]</b>
-* @property { Object[] } Errors - An array of objects containing the name of the event and error message<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
 */
 /**
 * Bind a callback action to execute when the element gets whispered to
