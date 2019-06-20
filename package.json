@@ -1,6 +1,6 @@
 {
   "name": "yeet",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A messaging abstraction layer to facilitate communication between object and elements, inspired by Angular's two way binding",
   "main": "yeet_lib.js",
   "dependencies": {},
