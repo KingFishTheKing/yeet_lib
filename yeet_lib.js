@@ -352,7 +352,8 @@ window.Yeet = (function(){
         let message = {origin:f, message:m };
         if(typeof t === 'string'){
             document.querySelectorAll(t).forEach(el => el.whisper = message)
-        }{
+        }
+        else{
             t.whisper = message
         }
         return true;
