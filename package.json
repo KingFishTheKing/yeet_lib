@@ -1,6 +1,6 @@
 {
   "name": "yeet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A messaging abstraction layer to facilitate communication between object and elements, inspired by Angular's two way binding",
   "main": "yeet_lib.js",
   "dependencies": {},
@@ -18,7 +18,7 @@
     "babel": "babel --presets es2015 ./yeet_lib.js -o ./build/yeet_lib_tr.js",
     "clean": "rimraf , ./tutorial/*, ./out/*",
     "minify": "uglifyjs ./build/yeet_lib_tr.js --mangle --compress --output ./public/release/yeet_lib_min.js",
-    "build": "npm run clean && npm run babel && npm run minify"
+    "build": "npm run clean & npm run babel & npm run minify"
   },
   "repository": {
     "type": "git",

@@ -326,13 +326,44 @@ window.Yeet = (function(){
 
     }
 
+    const whisperTo = (t, f, m) => {
+        //To From Message
+        if (typeof t !== 'object' && typeof t !== 'string'){
+            errors.push({
+                invoker: f,
+                error: new TypeError(`Expected the target to be an object reference or identifier of type string, got ${typeof t}`) 
+            });
+            return false;
+        }
+        if (typeof f !== 'object'){
+            errors.push({
+                invoker: f,
+                error: new TypeError(`Expected origin to be an object refernce, got ${typeof f}`) 
+            });
+            return false;
+        }
+        if (m === undefined){
+            errors.push({
+                invoker: f,
+                error: new TypeError(`Expected message to be defined, got ${typeof m} => ${m}`) 
+            });
+            return false;
+        }
+        let message = {origin:f, message:m };
+        if(typeof t === 'string'){
+            document.querySelectorAll(t).forEach(el => el.whisper = message)
+        }{
+            t.whisper = message
+        }
+        return true;
+    }
+
     /* === HELPER FUNCTIONALITY === */
     const lastError = () => {
         return errors[errors.length-1];
     }
     const hasYeet = (y, e) => {
         return(e.yeets) ? !!e.yeets.find((i) => {
-            console.log(i.name, y)
             return i.name === y;
         }) :  false;
     }
@@ -353,7 +384,8 @@ window.Yeet = (function(){
         yeet: yeet,
         unyeet: unyeet,
         hasYeet: hasYeet,
-        hasYoink: hasYoink
+        hasYoink: hasYoink,
+        whisperTo: whisperTo
     }
 })();
 
@@ -379,7 +411,7 @@ Object.defineProperties(
                     }
                 }
             },
-            sendWhisper:{
+            whisper:{
                 enumerable: true,
                 configurable: false,
                 get: function(){
@@ -436,6 +468,14 @@ Object.defineProperties(
                 value: function(i){
                     return window.Yeet.hasYoink(i, this);
                 }
+            },
+            whisperTo: {
+                enumerable:true,
+                configurable:false,
+                writable: false,
+                value: function(t, m){
+                    return window.Yeet.whisperTo(t, this, m);
+                }
             }
         } 
 );
@@ -443,7 +483,7 @@ Object.defineProperties(
 //General
 /**
 * @author Yoram Vleugels
-* @version 0.0.1
+* @version 0.0.11
 * @file yeet_lib.js
 * @description <b><i>The lord Yeethed and the Lord Yoinked away</i></b><p>Abstraction messaging layer, using custom event triggers in a (mostly) Pub/Sub pattern to make 121 or 12M communications easier</p>
 * @copyright Yoram Vleugels
@@ -459,30 +499,39 @@ Object.defineProperties(
 * @name Base
 * @property { Object[] } yeets - An array of objects containing the name of yoink and callback assigned to it<br /><b>[{name:*, callback: *}, {..}, {..}, ..]</b>
 * @property { Object[] } yoinks - An array objects with properties of the yoinks<br /><b>[{Element: <this>, action: 'yoink|yeet', callback:fnc, context: *, name: <Identifier>}, {..}, {..}, ..]</b>
+* @property { Object[] } errors - An array of objects containing all errors which have occured and their invoker<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
 */
 /**
 * Bind a callback action to execute when the element gets whispered to
 * @name onWhisper
 * @method
+* @since 0.0.1
+* @param { Function } fn - The function to execute on whisper
 * @memberof DOMElement
+* @example
+* Element.onWhisper = function(e){ this.textContent = e }
 */
 /**
-* Send a whisper to a specific element
-* @name sendWhisper
-* @method
+* Capture data with the defined 'onWhisper' method, The call is anonymous so if the element needs to know the origin element, use the origin elements' whisperTo method
+* @name whisper
+* @since 0.0.11
+* @property { Any } input -The information to whisper to pass
 * @memberof DOMElement
+* @example
+* element.whisper = "some text"
 */
 /**
 * Request notifications from yeets
 * @name yoink
+* @since 0.0.1
 * @method
 * @memberof DOMElement
 * @param { String | Number } n - ID or identifier of the yeet, case sensitive if using identifier, ID must be the ID as per activeYeets-array
 * @param { Function } c - Callback function 
 * @param { Element= } a - Element requesting notification
 * 
-* @return { Boolean } Returns true or false, if false, errors can be checked with Element.errors.lastError()
-* 
+* @return { Boolean } Returns true or false
+* @throws {TypeError | ReferenceError} available in the errors property or use Element.errors.lastError()
 * @example
 * Element.yoink('ID', console.log)
 */
@@ -491,13 +540,14 @@ Object.defineProperties(
 * 
 * @method
 * @name unyoink
+* @since 0.0.1
 * @memberof DOMElement
 * @param { String | Number } m - Identifier of index in activeYoinks of the yeet
 * @param { String | Function=} c - Callback function to revoke (if none is provided, all are removed)
 * @param { Element } a - Element requesting cancellation
 * 
-* @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
-* 
+* @returns { Boolean } Returns true or false
+* @throws {TypeError | ReferenceError} available in the errors property or use Element.errors.lastError()
 * @example
 * Element.unyoink('ID')
 */
@@ -507,6 +557,7 @@ Object.defineProperties(
 * @method
 * 
 * @name yeet
+* @since 0.0.1
 * @memberof DOMElement
 * @param { String } b - Identifier to which yoinks can be coupled, case sensitive
 * @param { * } i - Any additional information you want to pass through to observing elements
@@ -514,8 +565,8 @@ Object.defineProperties(
 * @param { Boolean } [c=false] - Complete flag, indicates if the element has completed all it's yeets, does not decouple 
 * @param { Boolean } [u=false] - Unique flag, indicates if the given identifier should be unique, so only this element can use it 
 * 
-* @return { Boolean } Returns true or false, if false errors can be checked with {@link Element.error.lastError()}
-* 
+* @return { Boolean } Returns true or false
+* @throws {TypeError | ReferenceError} available in the errors property or use Element.errors.lastError()
 * @example
 * Element.yeet('TestYeet', {'message': 'test'})
 * Element.yeet('TestYeet', {'message': 'test'}, this, true, true) //When using Complete and/or unique flags it's best to provide all arguments
@@ -527,13 +578,14 @@ Object.defineProperties(
 * @method
 * 
 * @name unyeet
+* @since 0.0.1
 * @memberof DOMElement
 * @param { String | Number } c - Identifier of index in activeYeets of the yeet
 * @param { Boolean } [u=true] - Should elements listening for this yoink be notified of the closure, done via complete flag
 * @param { Element } a - Element requesting cancellation
 * 
-* @returns { Boolean } Returns true or false, errors can be checked with Element.erros.lastError()
-*
+* @returns { Boolean } Returns true or false
+* @throws {TypeError | ReferenceError} available in the errors property or use Element.errors.lastError()
 * @example
 * Element.unyoink('ID')
 */
@@ -543,6 +595,7 @@ Object.defineProperties(
 * @method
 * 
 * @name hasYeet
+* @since 0.0.1
 * @memberof DOMElement
 * @param { String } c - Identifier of the yeet
 * @param { Element } a - Element to check
@@ -558,6 +611,7 @@ Object.defineProperties(
 * @method
 * 
 * @name hasYoink
+* @since 0.0.1
 * @memberof DOMElement
 * @param { String } c - Identifier of the yoink
 * @param { Element } a - Element to check
@@ -566,6 +620,36 @@ Object.defineProperties(
 * 
 * @example
 * Element.hasYoink('ID')
+*/
+/**
+* Return the last error which occured for this element
+* 
+* @method
+* 
+* @name LastError
+* @since 0.0.1
+* @memberof DOMElement
+* @returns { ErrorObject } Returns an object containing all data detailing the error
+* @example
+* Element.LastError()
+*/
+/**
+* Whisper to another element, Beware that unlike the whisper ontarget  elements, this function is not anonymous, the target element is aware the origin of the whisper
+* 
+* @method
+* 
+* @name whisperTo
+* @since 0.0.11
+* @memberof DOMElement
+* @param { String | object } t - The target(s) to whisper to, must be either a string identifier (css-selectors) or object reference
+* @param { Any } m - message to send to target
+* @returns { Boolean } Returns true or false
+* @throws {TypeError | ReferenceError} available in the errors property or use Element.errors.lastError()
+* @example
+* Element.whisperTo(AnotherElement, 'Target specific element');
+* Element.whisperTo('p', 'target all <p>-element')
+* Element.whisperTo('.classSelector', `target all elements with class 'classSelector'`);
+* Element.whisperTo('#idSelector', `target all elements with id 'idSelector'`);
 */
 
 //Namespace Yeet
@@ -578,7 +662,7 @@ Object.defineProperties(
 * @name Base
 * @property { Object[] } activeYeets - An array of objects containing the name of (global) yeets and element which throws it<br /><b>[{name: *, unique: true|false, subscribers: #amount, yoinkers:[*, *, ...]}, {..}, {..}, ..]</b>
 * @property { Object[] } activeYoinks - An array of objects containing the name of (global) yoinks and elements listening for it<br /><b>[{name: *, notifiers: [*, *, ..]}, {..}, {..}, ..]</b>
-* @property { Object[] } errors -An array of objects containing all errors which have occured and their invoker<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
+* @property { Object[] } errors - An array of objects containing all errors which have occured and their invoker<br /><b>[{Invoker: *|{name:*,..}, Error: ErrorObject}, {..}, {..}, ..]</b>
 */
 /**
 * The last error which occured
@@ -590,6 +674,7 @@ Object.defineProperties(
 * Alias of native yoink but pulled in the Yeet namespace
 * @memberof Yeet
 * @name yoink
+* @since 0.0.1
 * @method
 * @alias yoink
 * @example
@@ -599,6 +684,7 @@ Object.defineProperties(
 * Alias of native unyoink but pulled in the Yeet namespace
 * @memberof Yeet
 * @name unyoink
+* @since 0.0.1
 * @method
 * @alias unyoink
 * @example
@@ -608,6 +694,7 @@ Object.defineProperties(
 * Alias of native yeet but pulled in the Yeet namespace
 * @memberof Yeet
 * @name yeet
+* @since 0.0.1
 * @method
 * @alias yeet
 * @example
@@ -618,6 +705,7 @@ Object.defineProperties(
 * Alias of native yoink but pulled in the Yeet namespace
 * @memberof Yeet
 * @name unyeet
+* @since 0.0.1
 * @method
 * @alias unyeet
 * @example
@@ -627,6 +715,7 @@ Object.defineProperties(
  * Alias of native hasYeet but pulled in the Yeet namespace
  * @memberof Yeet
  * @name hasYeet
+ * @since 0.0.1
  * @method
  * @alias hasYeet
  * @example
@@ -636,8 +725,23 @@ Object.defineProperties(
  * Alias of native hasYionk but pulled in the Yeet namespace
  * @memberof Yeet
  * @name hasYoink
+ * @since 0.0.1
  * @method
  * @alias hasYoink
  * @example
  * window.Yeet.hasYoink('ID', document.querySelector('#div'))
  */
+
+ /**
+* Alias of native whisperTo but pulled in the Yeet namespace
+* 
+* @method
+* 
+* @name whisperTo
+* @since 0.0.11
+* @memberof Yeet
+* @alias whisperTo
+* @param { Object } originElement -Element send the whisper
+* @example
+* window.Yeet.whisperTo(targetElement, originElement 'Target specific element');
+*/
