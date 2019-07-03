@@ -4,7 +4,7 @@
 
 __*The lord Yeethed and the Lord Yoinked away*__  
 Abstraction messaging layer, using custom event triggers in a (mostly) Pub/Sub pattern to make 121 or 12M communications easier  
-Uses the build in event and messaging queu to transport events over to elements.  
+Uses the build in event and messaging queue to transport events over to elements.  
 Heavily inspired by the angular two way binding where components react to eachothers updates
 
 ### What is it and what does it do
