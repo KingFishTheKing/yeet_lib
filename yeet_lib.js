@@ -373,7 +373,6 @@ window.Yeet = (function(){
             return i.name === y;
         }) : false;
     }
-
     /* -===- EXPOSE FRONT FACING VARIABLES AND METHODS */
     return {
         activeYeets: yeets,
@@ -388,8 +387,8 @@ window.Yeet = (function(){
         hasYoink: hasYoink,
         whisperTo: whisperTo
     }
+    
 })();
-
 
 //Bind properties and methods to Element prototype to make them native accessible to DOMElements
 Object.defineProperties(
@@ -400,6 +399,7 @@ Object.defineProperties(
                 configurable: false,
                 messageHandler: () => {},
                 get: function(){
+                    return this.messageHandler;
                 },
                 set: function(e){
                     if (e instanceof Function){
@@ -481,6 +481,16 @@ Object.defineProperties(
         } 
 );
 
+//Instanciate attribute based bindings
+window.addEventListener('load', () => {
+    document.querySelectorAll('body *[onWhisper]').forEach(function(el){
+        el.onWhisper = (i) => {
+            let fn = new Function('i', el.getAttribute('onWhisper')).bind(el, i);
+            fn(i);
+        }
+    })
+});
+
 //General
 /**
 * @author Yoram Vleugels
@@ -511,6 +521,14 @@ Object.defineProperties(
 * @memberof DOMElement
 * @example
 * Element.onWhisper = function(e){ this.textContent = e }
+* <Element onWhisper="(function(<!--arg-->){<!--code-->}.bind(this, i))()" />
+*     Beware of using attribute binding, this is not yet nicely implemented.
+*      - Required to encapsulate your function in brackets '()' 
+*           and initialize it instantly => (-fn-)()
+*      - Required to use a full function call 'function(<!--arg-->){<!--code-->}'
+*           will not work (as of yet) with arrow functions
+*      - Required to bind your function 'function(){}.bind(this, i)' 
+*           Arguments must be 'this' and 'i'
 */
 /**
 * Capture data with the defined 'onWhisper' method, The call is anonymous so if the element needs to know the origin element, use the origin elements' whisperTo method
